@@ -9,6 +9,8 @@ const ROOT = new URL("..", import.meta.url);
 const read = async (p) => JSON.parse(await readFile(new URL(p, ROOT), "utf8"));
 
 const template = await readFile(new URL("src/template.html", ROOT), "utf8");
+const css = await readFile(new URL("src/app.css", ROOT), "utf8");
+const appJs = await readFile(new URL("src/app.js", ROOT), "utf8");
 const P = await read("data/products.json");
 const { looks, defaultOutfit } = await read("data/looks.json");
 let stock = { checkedAt: null, items: {} };
@@ -58,7 +60,11 @@ const data = [
   `const DEFAULT_OUTFIT=${JSON.stringify(def)};`,
 ].join("\n");
 
-const html = template.replace("/*__DATA__*/", () => data).replace("<!--__CHECKED__-->", checked);
+const html = template
+  .replace("/*__CSS__*/", () => css)
+  .replace("/*__DATA__*/", () => data)
+  .replace("/*__APPJS__*/", () => appJs)
+  .replaceAll("<!--__CHECKED__-->", checked);
 
 await mkdir(new URL("dist/", ROOT), { recursive: true });
 await writeFile(new URL("dist/index.html", ROOT), html);
