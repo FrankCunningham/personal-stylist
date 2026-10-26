@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Personal Stylist</title>
+<meta name="description" content="Deep Autumn wardrobe: palette-matched outfits and a shopping list that is re-checked for stock every week.">
+<meta name="theme-color" content="#2a1e17">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Stylist">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<style>:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:wght@400;600&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: one narrow column; outfit "figures" painted with each piece's measured color; a stylist verdict under every outfit; shopping list filtered by palette color */
+:root{
+  --bg:#2a1e17; --surface:#36281f; --line:#4d3a2d; --fg:#f3e9dc; --muted:#c2ad97; --accent:#e08548; --onaccent:#24170f;
+  --good:#9fc98a; --goodbg:rgba(159,201,138,.14); --warn:#e6b85c; --bad:#ef8a7a; --badbg:rgba(239,138,122,.14);
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Public Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#f7f2ea;--surface:#efe6d9;--line:#d9cbb8;--fg:#2b1f17;--muted:#6e5a48;--accent:#a8481a;--onaccent:#fff8ef;--good:#3f7a2c;--goodbg:rgba(63,122,44,.12);--warn:#9a6a0a;--bad:#b23a2a;--badbg:rgba(178,58,42,.1);color-scheme:light}}
+:root[data-theme="light"]{--bg:#f7f2ea;--surface:#efe6d9;--line:#d9cbb8;--fg:#2b1f17;--muted:#6e5a48;--accent:#a8481a;--onaccent:#fff8ef;--good:#3f7a2c;--goodbg:rgba(63,122,44,.12);--warn:#9a6a0a;--bad:#b23a2a;--badbg:rgba(178,58,42,.1);color-scheme:light}
+body{background:var(--bg);color:var(--fg);font:16px/1.55 var(--body)}
+.wrap{max-width:820px;margin:0 auto;padding-block:28px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:44px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.1}
+h1{font-size:clamp(2rem,7vw,3rem);font-weight:700}
+h2{font-size:1.55rem;font-weight:700}
+h3{font-size:1.05rem;font-weight:500}
+p{margin:0}
+a{color:var(--fg);text-decoration-color:var(--accent);text-underline-offset:3px}
+.eyebrow{font:600 .72rem/1 var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.lede{color:var(--muted);max-width:64ch}
+header{display:grid;gap:12px}
+.strip{display:flex;height:16px;border-radius:3px;overflow:hidden;margin-top:6px}
+.strip span{flex:1}
+section{display:grid;gap:14px}
+.rules{display:grid;margin:0;padding:0;list-style:none}
+.rules li{display:grid;grid-template-columns:84px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.rules b{font:600 .72rem/1.4 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent);padding-top:3px}
+.rules li div{min-width:0}
+.note{background:var(--surface);border-radius:8px;padding:14px 16px;color:var(--muted);font-size:.93rem;display:grid;gap:8px}
+.note strong{color:var(--fg)}
+.stat{font-size:.85rem;color:var(--muted)}
+
+/* figure */
+.figure{width:120px;flex:none;display:grid;gap:3px}
+.torso{height:120px;border-radius:14px 14px 4px 4px;overflow:hidden;display:flex;position:relative}
+.torso .acc{position:absolute;display:block;box-shadow:0 0 0 1px rgba(0,0,0,.18)}
+.torso .acc[hidden]{display:none}
+.torso .acc.tie{left:45%;width:10%;top:0;height:64%;border-radius:0 0 4px 4px;clip-path:polygon(20% 0,80% 0,70% 14%,100% 88%,50% 100%,0 88%,30% 14%)}
+.torso .acc.scarf{left:24%;width:52%;top:0;height:13%;border-radius:0 0 10px 10px}
+.torso .acc.psq{left:7%;width:13%;top:24%;height:7%;border-radius:1px}
+.torso .lay{flex:0 0 26%}
+.torso .top{flex:1}
+.legs{display:grid;grid-template-columns:1fr 1fr;gap:4px;height:118px}
+.legs span{border-radius:2px 2px 4px 4px}
+.feet{display:grid;grid-template-columns:1fr 1fr;gap:10px;height:16px}
+.feet span{border-radius:8px 8px 3px 3px}
+
+/* builder */
+.mixer{background:var(--surface);border-radius:12px;padding:18px;display:grid;gap:16px}
+.mix-top{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.mix-desc{flex:1;min-width:0;display:grid;gap:10px}
+.pline{display:grid;grid-template-columns:54px 1fr;gap:8px;align-items:baseline}
+.pline .k{font:600 .7rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pline .v{min-width:0}
+.store{color:var(--muted);font-size:.85rem}
+.match{display:inline-flex;flex-wrap:wrap;align-items:center;gap:2px 5px;font-size:.78rem;color:var(--muted);font-family:var(--mono)}
+.match .to .dot{vertical-align:-1px}
+.controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.ctx{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+label{display:grid;gap:4px;font-size:.78rem;color:var(--muted)}
+select{font:inherit;font-size:.92rem;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px;width:100%;min-width:0}
+button{font:600 1rem var(--body);background:var(--accent);color:var(--onaccent);border:0;border-radius:8px;padding:12px 18px;cursor:pointer}
+button.alt{background:transparent;color:var(--fg);border:1px solid var(--accent)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btns button{flex:1 1 160px}
+button:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--fg);outline-offset:2px}
+.count{font-size:.85rem;color:var(--muted)}
+.verdict{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.vhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.grade{font:600 .74rem/1 var(--body);letter-spacing:.08em;text-transform:uppercase;border-radius:99px;padding:6px 10px;background:var(--goodbg);color:var(--good)}
+.grade.no{background:var(--badbg);color:var(--bad)}
+.grade.meh{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.ftag{font-size:.8rem;color:var(--muted)}
+.why{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:.9rem}
+.why li{display:grid;grid-template-columns:16px 1fr;gap:6px}
+.why li::before{content:"✓";color:var(--good);font-weight:600}
+.why li.con::before{content:"✕";color:var(--bad)}
+.why li.soft::before{content:"–";color:var(--warn)}
+
+/* looks */
+.looks{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.look{border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;grid-template-columns:52px minmax(0,1fr);gap:12px;align-items:start}
+.look .figure{width:52px}
+.look .torso{height:52px;border-radius:8px 8px 2px 2px}
+.look .legs{height:50px;gap:2px}
+.look .feet{height:8px;gap:5px}
+.look .meta{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.look .grade{padding:4px 8px;font-size:.66rem}
+.tagchip{font:600 .66rem/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:99px;padding:4px 8px}
+.look .lnote{font-size:.88rem;color:var(--muted)}
+.look ul{margin:8px 0 10px;padding:0;list-style:none;display:grid;gap:4px;font-size:.86rem}
+.look li{color:var(--muted)}
+.look li a{color:var(--fg)}
+.tryit{font-size:.8rem;padding:7px 10px;background:transparent;color:var(--fg);border:1px solid var(--line)}
+
+/* palette filter */
+#palgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.pal{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:8px;text-align:left;font:600 .85rem var(--body);background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:6px 10px 6px 6px}
+.pal.all{grid-template-columns:1fr auto;padding-left:12px}
+.pal .sw{width:28px;height:28px;border-radius:6px;box-shadow:inset 0 0 0 1px rgba(127,127,127,.35)}
+.pal .pc{font:400 .75rem var(--mono);color:var(--muted)}
+.pal.on{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.pal:disabled{opacity:.45;cursor:default}
+
+/* shop list */
+.cat{display:grid;gap:0}
+.cat h3{font-size:.78rem;font-family:var(--body);font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);padding-bottom:8px}
+.prod{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 14px;padding:14px 0;border-top:1px solid var(--line);align-items:start}
+.prod .name{font-family:var(--display);font-weight:500;font-size:1.05rem;line-height:1.25}
+.prod .brand{display:block;font:600 .7rem/1.4 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.price{font:400 .8rem var(--mono);color:var(--muted);margin-left:4px}
+.prod .why2{grid-column:1;color:var(--muted);font-size:.88rem}
+.prod .sw{grid-column:1;display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:.82rem;color:var(--muted)}
+.chip{display:inline-flex;align-items:center;gap:5px;border:1px solid var(--line);border-radius:99px;padding:3px 10px 3px 4px;color:var(--fg);flex-wrap:wrap}
+.chip .arrow{color:var(--muted)}
+.chip .pm{color:var(--muted)}
+.chip .de{font:400 .72rem var(--mono)}
+.dot{width:16px;height:16px;border-radius:50%;display:inline-block;flex:none;box-shadow:inset 0 0 0 1px rgba(127,127,127,.4);vertical-align:-3px}
+.dot.sm{width:11px;height:11px;vertical-align:-1px}
+.go{grid-column:2;grid-row:1 / span 3;align-self:center;font:600 .85rem var(--body);background:var(--accent);color:var(--onaccent);text-decoration:none;border-radius:8px;padding:9px 12px;white-space:nowrap}
+.type{font:400 .72rem var(--mono);color:var(--accent);margin-left:6px;white-space:nowrap}
+@media (max-width:560px){.mix-top{align-items:flex-start;gap:12px}.mix-top>.figure{width:64px;position:sticky;top:12px}.mix-top .torso{height:66px;border-radius:10px 10px 3px 3px}.mix-top .legs{height:64px;gap:3px}.mix-top .feet{height:10px;gap:6px}.pline{grid-template-columns:1fr;gap:3px}}
+@media (max-width:460px){.prod{grid-template-columns:1fr}.go{grid-column:1;grid-row:auto;justify-self:start;margin-top:6px}.rules li{grid-template-columns:1fr;gap:2px}}
+
+.stores{display:flex;flex-wrap:wrap;gap:8px}
+.stores a{font-size:.9rem;border:1px solid var(--line);border-radius:99px;padding:6px 12px;text-decoration:none}
+.avoid{display:flex;gap:8px;flex-wrap:wrap}
+.avoid span{font-size:.85rem;border:1px dashed var(--line);border-radius:99px;padding:4px 12px;color:var(--muted)}
+table.scale{border-collapse:collapse;font-size:.85rem;width:100%}
+table.scale td{padding:6px 8px;border-top:1px solid var(--line);vertical-align:top}
+table.scale td:first-child{font-family:var(--mono);white-space:nowrap;color:var(--fg)}
+/* framework */
+.fbadge{font:600 .7rem/1 var(--body);letter-spacing:.06em;text-transform:uppercase;border-radius:99px;padding:6px 10px;background:var(--surface);border:1px solid var(--accent);color:var(--fg)}
+.look .fbadge{padding:4px 8px;font-size:.62rem}
+.ratio{display:grid;gap:4px;margin:2px 0}
+.rbar{display:flex;height:12px;border-radius:99px;overflow:hidden;box-shadow:inset 0 0 0 1px rgba(127,127,127,.35)}
+.rbar span{display:block}
+.rlab{display:flex;gap:10px;flex-wrap:wrap;font:400 .72rem var(--mono);color:var(--muted)}
+.rlab .target{margin-left:auto}
+.formulas{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.fcard{border:1px solid var(--line);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.fcard .tryit,.fcard .nofit{margin-top:auto}
+.fcard .fam{font:600 .66rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+.fcard h3{font-size:1rem}
+.fcard p{font-size:.86rem;color:var(--muted)}
+.fcard .nofit{font-size:.8rem;border-top:1px dashed var(--line);padding-top:8px}
+.modes{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:10px}
+.mode{display:flex;flex-direction:column;gap:8px;border:1px solid var(--line);border-radius:10px;padding:10px;min-width:0}
+.mode p{font-size:.8rem;color:var(--muted)}
+.mode button{width:100%;background:transparent;color:var(--fg);border:1px solid var(--accent)}
+.mode button[aria-pressed="false"]:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}
+.mode button[aria-pressed="true"]{background:var(--accent);color:var(--onaccent)}
+label.inline{grid-template-columns:auto 1fr;align-items:center;gap:8px}
+.fsw{display:flex;height:22px;border-radius:6px;overflow:hidden}
+.fsw span{display:block}
+.pgroup{grid-column:1 / -1;margin:6px 0 0;font:600 .7rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.pal .hx{display:block;font:400 .7rem var(--mono);color:var(--muted)}
+.chip .code,.look .de{font:400 .7rem var(--mono);color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.torso span,.legs span,.feet span{transition:background-color .35s}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+<header>
+  <p class="eyebrow">Personal styling · Deep Autumn · 5′11″ · broad build</p>
+  <h1>Your personal stylist</h1>
+  <p class="lede">Every color on this page was checked against the exact codes on your palette card. I sampled the pixels of each piece's official swatch or product photo, measured how far it sits from the nearest of your 18 colors, and kept only true matches. Every outfit is built with the 60-30-10 rule and a designer color formula. Every brand is in, whatever the price, as long as it comes in your size.</p>
+  <div class="strip" aria-hidden="true"><span style="background:#6B6B2F"></span><span style="background:#4A5D23"></span><span style="background:#2F5233"></span><span style="background:#CC5500"></span><span style="background:#B7410E"></span><span style="background:#C16A4A"></span><span style="background:#8B5A2B"></span><span style="background:#5C3317"></span><span style="background:#3B2519"></span><span style="background:#800020"></span><span style="background:#722F37"></span><span style="background:#008080"></span><span style="background:#007F86"></span><span style="background:#F5ECD7"></span><span style="background:#C19A6B"></span><span style="background:#FFF8E7"></span><span style="background:#1F3A4D"></span><span style="background:#374550"></span></div>
+  <p class="stat" id="stat"></p>
+</header>
+
+<section>
+  <h2>How the colors were checked</h2>
+  <div class="note">
+    <p><strong>Pixels, not color names.</strong> Each color comes from the store's own fabric swatch (DXL, UNIQLO) or its product photo (True Classic, Good Man Brand, Perry Ellis, IZOD, G.H. Bass, American Giant, BYLT, Faherty, Thursday Boot Co., Toad&amp;Co, tentree). For photos, the background is masked out and the garment's main color is found by clustering the pixels on the chest or legs. Black items were left out even when they read as charcoal, because a black shirt isn't charcoal in person.</p>
+    <p><strong>Reference colors are your card's codes.</strong> I re-sampled the swatches in your screenshot and they match the printed codes, including the two the screenshot cuts off: Dark teal-navy #1F3A4D and Charcoal #374550. Every chip below shows the piece's measured code next to the card's code, so you can compare them yourself.</p>
+    <p><strong>No fabric photo lands on the exact same code.</strong> Lighting, weave, and dye shift every pixel, and the same shirt photographed twice gives two codes. So "the same" here means measurably closest: use <b>Color match</b> in the builder to keep only near-exact (ΔE ≤ 3) or very close (ΔE ≤ 5) pieces.</p>
+    <p><strong>ΔE is the distance to your card.</strong> It's the CIEDE2000 color difference between the piece and the nearest of your 18 colors. Anything above 8 was cut, and white or off-white had to be within 6 of cream or warm ivory to make it.</p>
+    <table class="scale"><tr><td>ΔE 0–3</td><td>Near-exact. Side by side, most people can't tell them apart.</td></tr><tr><td>ΔE 3–6</td><td>Very close. Same color, slightly lighter, darker, or softer.</td></tr><tr><td>ΔE 6–8</td><td>Close. Clearly the same color family, and still on palette.</td></tr></table>
+    <p><strong>Honest limits.</strong> Photos carry studio lighting and heathered fabrics average out, so treat ΔE as a ranking, not a lab test. Stock and links are re-checked automatically every week (last check: <!--__CHECKED__-->). Sold-out colors and dead links are hidden until they come back.</p>
+  </div>
+</section>
+
+<section>
+  <h2>The design framework</h2>
+  <ul class="rules">
+    <li><b>60-30-10</b><div>About 60% of what you wear is a base neutral (espresso, dark teal-navy, charcoal, camel, or cream) on the structural pieces: pants, coats, jackets. About 30% is a supporting earthy color, like a forest green jacket or rust knit. About 10% is an accent jewel tone (burnt orange, teal, burgundy, or deep turquoise), usually the shirt peeking out of an open layer, or a scarf or tie. The bar under every outfit shows its real split.</div></li>
+    <li><b>Formulas</b><div>Every outfit follows a designer formula: <b>tonal</b> (shades of one family), <b>analogous</b> (neighbors on the color wheel), or <b>complementary</b> (warm earth against cool jewel tones). If none fits exactly, the outfit still has to pass Classic 60-30-10.</div></li>
+    <li><b>Near the face</b><div>No cool whites or cool grays by your face. Those spots go to cream, warm ivory, or camel.</div></li>
+    <li><b>Grounding</b><div>Bold accents like burnt orange, teal, and deep turquoise always sit against a dark neutral such as espresso or dark teal-navy.</div></li>
+    <li><b>Texture</b><div>Rich colors go on different fabrics (knit, canvas, twill, wool, denim) so they contrast instead of clash.</div></li>
+    <li><b>Proportion</b><div>An open layer draws two vertical lines down your front, and darker on top balances a broad frame. Every piece sits within one step of formality of the others, and pants are straight, never skinny.</div></li>
+  </ul>
+  <div class="formulas" id="formulas"></div>
+</section>
+
+<section id="builder">
+  <h2>Outfit builder</h2>
+  <p class="lede"><b>Shuffle Mixed Brands</b> builds an outfit where every piece comes from a different brand. Pick any of the brands to build around, or let each tap move to the next brand in alphabetical order. <b>Shuffle Single Brands</b> builds the whole outfit from one brand, either the one you pick or each brand in turn. Both follow the design framework above. Pick a color formula to stay inside one recipe. You can also choose pieces yourself and get a verdict. The figure is painted with each piece's measured color.</p>
+  <div class="mixer">
+    <div class="ctx">
+      <label for="sFormula">Color formula<select id="sFormula"></select></label>
+      <label for="sOcc">Occasion<select id="sOcc"><option value="any">Any</option><option value="work">Work</option><option value="weekend">Weekend</option><option value="date">Date night</option></select></label>
+      <label for="sMatch">Color match<select id="sMatch"></select></label>
+    </div>
+    <div class="modes" role="group" aria-label="Shuffle filters">
+      <div class="mode">
+        <button id="shuffleMixed" type="button" aria-pressed="false">Shuffle Mixed Brands</button>
+        <label for="sLead" class="inline">Build around<select id="sLead"></select></label>
+        <p>Every piece from a different brand. Pick a brand to build around, or let each tap move to the next brand A to Z.</p>
+      </div>
+      <div class="mode">
+        <button id="shuffleSingle" type="button" aria-pressed="false">Shuffle Single Brands</button>
+        <label for="sBrand" class="inline">Brand<select id="sBrand"></select></label>
+      </div>
+    </div>
+    <p class="count" id="brandnote" aria-live="polite"></p>
+    <div class="mix-top">
+      <div class="figure" id="fig" aria-hidden="true">
+        <div class="torso"><span class="lay"></span><span class="top"></span><span class="lay"></span></div>
+        <div class="legs"><span></span><span></span></div>
+        <div class="feet"><span></span><span></span></div>
+      </div>
+      <div class="mix-desc" id="desc"></div>
+    </div>
+    <div class="verdict" id="verdict" aria-live="polite"></div>
+    <div class="controls">
+      <label for="sTop">Shirt or sweater<select id="sTop"></select></label>
+      <label for="sLay">Layer<select id="sLay"></select></label>
+      <label for="sBot">Pants<select id="sBot"></select></label>
+      <label for="sShoe">Shoes<select id="sShoe"></select></label>
+      <label for="sAcc" id="accRow">Accent piece (the 10%)<select id="sAcc"></select></label>
+    </div>
+    <p class="count" id="count"></p>
+  </div>
+</section>
+
+<section>
+  <h2>Stylist looks</h2>
+  <p class="lede">One or more looks for each formula your measured pieces can make, each passing the 60-30-10 rule and every styling rule. Tap <b>Open in the builder</b> to swap any piece.</p>
+  <div class="looks" id="looks"></div>
+</section>
+
+<section>
+  <h2>Shop by palette color</h2>
+  <p class="lede">Your card's 18 colors and codes, grouped the same way. Tap one to see every piece that matches it across all brands, at the current color match. The number is how many color options matched.</p>
+  <div id="palgrid"></div>
+</section>
+
+<section>
+  <h2>The shopping list</h2>
+  <p class="lede">Each chip shows the piece's <b>measured color and code</b>, the store's own color name, the card color and code it matches, and the ΔE between them. ★ marks your favorites. Linked color names open that exact color; for the others, tap the named color on the product page.</p>
+  <p class="count" id="shopnote" aria-live="polite"></p>
+  <div id="shop" style="display:grid;gap:28px"></div>
+</section>
+
+<section>
+  <h2>International brands</h2>
+  <div class="note">
+    <p><strong>Japan: UNIQLO is in.</strong> Its US site sells men's tops up to 3XL, and every UNIQLO color on this list had 3XL in stock on Oct 25. UNIQLO's fabric-swatch photos were color-picked like DXL's.</p>
+    <p><strong>Spain: none fit yet.</strong> Zara's largest men's size is a 2XL cut for a 44–46 inch chest. Mango Man stops at XXL, and I couldn't confirm anything above XXL at Massimo Dutti. El Corte Inglés has a big-sizes section, but sending it to the US means a quoted box-shipping service, not normal online delivery. None of them would fit a 260-pound, broad build reliably, so they aren't on the list.</p>
+  </div>
+</section>
+
+<section>
+  <h2>Stores worth browsing</h2>
+  <p class="lede">These open each store's main page, not a specific item. Search them for your card's words: rust, burnt orange, terracotta, olive, moss, forest, teal, wine, camel, espresso.</p>
+  <div class="stores">
+    <a href="https://www.dxl.com" target="_blank" rel="noopener">DXL</a>
+    <a href="https://www.trueclassictees.com" target="_blank" rel="noopener">True Classic</a>
+    <a href="https://thegoodmanbrand.com/collections/good-man-brand-clothing" target="_blank" rel="noopener">Good Man Brand</a>
+    <a href="https://www.perryellis.com" target="_blank" rel="noopener">Perry Ellis</a>
+    <a href="https://www.uniqlo.com/us/en/men" target="_blank" rel="noopener">UNIQLO</a>
+    <a href="https://www.kingsize.com" target="_blank" rel="noopener">KingSize</a>
+    <a href="https://www.duluthtrading.com/men/big-and-tall" target="_blank" rel="noopener">Duluth Trading</a>
+    <a href="https://izod.com/collections/big-tall-sweaters" target="_blank" rel="noopener">IZOD Big &amp; Tall</a>
+    <a href="https://www.ghbass.com/collections/larson" target="_blank" rel="noopener">G.H. Bass</a>
+    <a href="https://www.american-giant.com" target="_blank" rel="noopener">American Giant</a>
+    <a href="https://byltbasics.com" target="_blank" rel="noopener">BYLT</a>
+    <a href="https://fahertybrand.com" target="_blank" rel="noopener">Faherty</a>
+    <a href="https://thursdayboots.com" target="_blank" rel="noopener">Thursday Boot Co.</a>
+    <a href="https://www.toadandco.com" target="_blank" rel="noopener">Toad&amp;Co</a>
+    <a href="https://www.tentree.com" target="_blank" rel="noopener">tentree</a>
+  </div>
+  <p class="note">Still missing: olive or moss pants that measure close to your card in a 40–44 waist. That's the one piece Earthy Greens needs. Workwear and outdoor brands with big sizes are the best place to look, so check olive work pants and fatigues at Duluth Trading or DXL before buying.</p>
+</section>
+
+<section>
+  <h2>Colors to skip</h2>
+  <div class="avoid"><span>Pure black</span><span>Stark cool white</span><span>Pastels</span><span>Gray-toned neutrals like Driftwood or Mushroom</span><span>Light gray denim</span><span>Neon</span><span>Bright cobalt and royal blue</span></div>
+  <p class="note">Swap black for espresso or charcoal, stark white for warm ivory or cream, and black shoes for chocolate or espresso leather.</p>
+</section>
+</div>
+
+<script>
+/*__DATA__*/
+/* ===== palette: the 18 exact codes from your Deep Autumn card ===== */
+const PAL={olive:["Olive","#6B6B2F"],forest:["Forest green","#2F5233"],moss:["Deep moss","#4A5D23"],burnt:["Burnt orange","#CC5500"],rust:["Rust","#B7410E"],terra:["Terracotta","#C16A4A"],brown:["Warm brown","#8B5A2B"],choc:["Chocolate","#5C3317"],esp:["Espresso","#3B2519"],burg:["Burgundy","#800020"],wine:["Deep wine","#722F37"],teal:["Teal","#008080"],turq:["Deep turquoise","#007F86"],cream:["Cream","#F5ECD7"],camel:["Camel","#C19A6B"],ivory:["Warm ivory","#FFF8E7"],tnavy:["Dark teal-navy","#1F3A4D"],charcoal:["Charcoal","#374550"]};
+const GROUPS=[["Greens",["olive","forest","moss"]],["Oranges and rusts",["burnt","rust","terra"]],["Browns",["brown","choc","esp"]],["Reds",["burg","wine"]],["Teals",["teal","turq"]],["Warm lights",["cream","camel","ivory"]],["Dark neutrals",["tnavy","charcoal"]]];
+const PALORDER=GROUPS.flatMap(g=>g[1]);
+const LIGHT=new Set(["cream","camel","ivory"]);
+const DARKN=new Set(["esp","choc","tnavy","charcoal"]);
+const BOLD=new Set(["burnt","teal","turq"]);
+/* ===== the design framework ===== */
+const FORMULAS=[
+ {id:"browns",fam:"Monochromatic / tonal",name:"Browns & Lights",recipe:"Espresso base + warm brown + cream accent",base:["esp","choc"],sec:["brown","camel"],acc:["cream","ivory"]},
+ {id:"greens",fam:"Monochromatic / tonal",name:"Earthy Greens",recipe:"Deep moss + olive + warm ivory",base:["moss","forest","olive"],sec:["olive","moss","forest"],acc:["ivory","cream"]},
+ {id:"warmth",fam:"Analogous",name:"Autumn Warmth",recipe:"Camel base + terracotta + burnt orange",base:["camel","cream"],sec:["terra","rust"],acc:["burnt","rust","terra"]},
+ {id:"earth",fam:"Analogous",name:"Rich Earth",recipe:"Warm brown base + forest green + olive",base:["brown","choc"],sec:["forest","olive","moss"],acc:["olive","moss","forest"]},
+ {id:"jewel",fam:"Analogous",name:"Deep Jewel Tones",recipe:"Chocolate base + deep wine + burgundy",base:["choc","esp"],sec:["wine","burg"],acc:["burg","wine"]},
+ {id:"tealrust",fam:"Complementary",name:"Teal & Rust",recipe:"Dark teal-navy base + teal + rust or burnt orange accent",base:["tnavy"],sec:["teal","turq"],acc:["rust","burnt","terra"]},
+ {id:"burgforest",fam:"Complementary",name:"Burgundy & Forest",recipe:"Charcoal base + forest green + burgundy accent",base:["charcoal"],sec:["forest","moss","olive"],acc:["burg","wine"]},
+ {id:"turqearth",fam:"Complementary",name:"Turquoise & Warm Earth",recipe:"Espresso base + camel + deep turquoise accent",base:["esp","choc"],sec:["camel","cream"],acc:["turq","teal"]},
+ {id:"classic",fam:"60-30-10",name:"Classic 60-30-10",recipe:"Dark neutral or warm light base + one supporting color + a smaller accent",base:["esp","choc","tnavy","charcoal","camel","cream","ivory"],sec:["forest","olive","moss","rust","terra","brown","wine","burg","burnt","teal","turq"],acc:["burnt","teal","turq","burg","rust","terra","wine","forest","olive","moss","brown","cream","ivory","camel"]}
+];
+const FBY=Object.fromEntries(FORMULAS.map(f=>[f.id,f]));
+const FAVB=new Set(["Perry Ellis","Good Man Brand","UNIQLO"]);
+for(const id in P){P[id].id=id;P[id].fav=FAVB.has(P[id].b)}
+const KIND={tee:"tee",henley:"henley",crew:"sweater",kpolo:"polo sweater",qz:"zip sweater",flannel:"flannel shirt",denim:"denim shirt",shirt:"button-up shirt",polo:"polo",sweat:"sweatshirt",hoodie:"hoodie",cardigan:"cardigan",vest:"vest",coat:"coat",blazer:"blazer",fleece:"fleece jacket",shirtjac:"shirt jacket",chore:"work jacket",bomber:"short jacket",denimjkt:"denim jacket",chino:"chinos",jeans:"jeans",work:"work pants",boot:"boots",chelsea:"Chelsea boots",moc:"moc-toe shoes",oxford:"oxfords",loafer:"loafers",sneaker:"leather sneakers",tie:"tie",ktie:"knit tie",psq:"pocket square",scarf:"scarf",leather:"leather jacket",puffer:"puffer jacket",cordjkt:"corduroy jacket",cords:"corduroys",jogger:"joggers"};
+const TEXTURE={tee:"jersey",henley:"jersey",polo:"jersey",crew:"knit",kpolo:"knit",qz:"knit",sweat:"fleece",hoodie:"fleece",cardigan:"knit",flannel:"flannel",denim:"denim",shirt:"shirting",vest:"quilting",coat:"wool",blazer:"twill",fleece:"fleece",shirtjac:"brushed twill",chore:"canvas",bomber:"shell fabric",denimjkt:"denim",chino:"twill",jeans:"denim",work:"canvas",tie:"silk",ktie:"knit",psq:"silk",scarf:"wool",leather:"leather",puffer:"quilted nylon",cordjkt:"corduroy",cords:"corduroy",jogger:"fleece"};
+const plural=new Set(["corduroys","joggers","chinos","jeans","work pants","boots","Chelsea boots","moc-toe shoes","oxfords","loafers","leather sneakers"]);
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const nm=k=>PAL[k][0].toLowerCase();
+const CR=x=>P[x[0]].c[x[1]];
+const key=x=>x[0]==="none"?null:CR(x)[0];
+const hexOf=x=>{const c=CR(x);return c[3]||PAL[c[0]][1]};
+const cname=x=>CR(x)[1];
+const link=x=>{const c=CR(x);if(c[2])return c[2].startsWith("http")?c[2]:P[x[0]].u+c[2];return P[x[0]].u};
+const full=p=>`${p.b} ${p.n}`;
+function hexLab(h){const f=c=>{c/=255;return c>0.04045?Math.pow((c+0.055)/1.055,2.4):c/12.92};const R=f(parseInt(h.slice(1,3),16)),G=f(parseInt(h.slice(3,5),16)),B=f(parseInt(h.slice(5,7),16));const t=v=>v>0.008856?Math.cbrt(v):7.787*v+16/116;const X=t((R*0.4124+G*0.3576+B*0.1805)/0.95047),Y=t(R*0.2126+G*0.7152+B*0.0722),Z=t((R*0.0193+G*0.1192+B*0.9505)/1.08883);return[116*Y-16,500*(X-Y),200*(Y-Z)]}
+function lumHex(h){return .2126*parseInt(h.slice(1,3),16)/255+.7152*parseInt(h.slice(3,5),16)/255+.0722*parseInt(h.slice(5,7),16)/255}
+/* a near-face piece that measured as a cool white or a cool gray breaks the Deep Autumn face rule */
+function coolNearFace(x){const[L,a,b]=hexLab(hexOf(x));const C=Math.hypot(a,b);if(L>80&&b<5.5)return "a cool white";if(L>40&&L<=80&&C<7&&b<1)return "a cool gray";return null}
+const rnd=n=>Math.floor(Math.random()*n);
+const pick=a=>a[rnd(a.length)];
+const deLabel=d=>d<=3?"near-exact":d<=5?"very close":"close";
+/* visual area of each piece: 60-30-10 is about how much of you each color covers */
+const ACC_SHARE=0.07;/* a tie, scarf, or pocket square: the framework's small accent */
+const hasA=o=>!!(o.a&&o.a[0]!=="none");
+function areas(o){const L=o.l[0]==="none"?null:P[o.l[0]];const A=!L?{t:.5,l:0,b:.42,s:.08}:L.kind==="vest"?{t:.3,l:.2,b:.42,s:.08}:{t:.12,l:.38,b:.42,s:.08};
+ if(!hasA(o)){A.a=0;return A}const k=1-ACC_SHARE;return{t:A.t*k,l:A.l*k,b:A.b*k,s:A.s*k,a:ACC_SHARE}}
+/* fit an outfit to one formula: base ≈60%, secondary ≈30%, accent ≈10% */
+function fitFormula(F,o){
+ const A=areas(o),sh={};let shoeK=null;
+ [["t",o.t],["l",o.l],["b",o.b],["s",o.s],["a",o.a||["none",0]]].forEach(([slot,x])=>{if(x[0]==="none"||!A[slot])return;const k=key(x);if(slot==="s")shoeK=k;sh[k]=(sh[k]||0)+A[slot]});
+ let base=0,sec=0,acc=0,other=0,secK=null,accK=null;const baseK=[],secKs=[];
+ /* tonal formulas list the same family as base and secondary: the dominant shade is the base, other shades of the family are the secondary */
+ const mono=F.base.some(k=>F.sec.includes(k));let famBase=null;
+ for(const k of Object.keys(sh).sort((a,b)=>sh[b]-sh[a])){
+  const v=sh[k];
+  if(mono&&F.base.includes(k)&&F.sec.includes(k)){if(!famBase||famBase===k){famBase=k;base+=v;baseK.push(k);continue}if(!secK)secK=k;sec+=v;secKs.push(k);continue}
+  if(F.base.includes(k)){base+=v;baseK.push(k);continue}
+  if(secK===k){sec+=v;continue}
+  if(!secK&&F.sec.includes(k)){secK=k;sec+=v;secKs.push(k);continue}
+  if(!accK&&F.acc.includes(k)){accK=k;acc+=v;continue}
+  if(k===shoeK&&Math.abs(v-A.s)<1e-9&&(DARKN.has(k)||k==="brown"||LIGHT.has(k))){base+=v;baseK.push(k);continue}
+  other+=v;
+ }
+ if(other>1e-9||!secK||base<0.449||base>0.921||sec<0.099||sec>0.501||acc>0.201)return null;
+ if(F.fam==="Complementary"&&!accK)return null; /* the contrast accent is the point of a complementary formula */
+ const fit=1-(Math.abs(base-.6)+Math.abs(sec-.3)+Math.abs(acc-.1))/2;
+ return{F,base,sec,acc,baseK,secK,secKs,accK,fit};
+}
+function bestFormula(o,only){let best=null;for(const F of FORMULAS){if(only&&only!=="any"&&F.id!==only)continue;const r=fitFormula(F,o);if(!r)continue;const s=r.fit+(F.id==="classic"?0:0.25)+(r.accK?0.1:0);if(!best||s>best.s)best={...r,s}}return best}
+const COLLAR=new Set(["flannel","denim","shirt","polo","kpolo"]);
+function layerProblem(T,L){
+ const t=T.kind,l=L.kind;
+ if(t==="qz"&&!["coat","chore","blazer","denimjkt","leather","puffer","cordjkt"].includes(l))return `A zip sweater under a ${KIND[l]} bunches at the collar. Wear it alone, or under a coat, blazer, or work jacket.`;
+ if(t==="hoodie"&&!["chore","bomber","denimjkt","fleece","vest","leather","puffer","cordjkt"].includes(l))return `A hoodie under a ${KIND[l]} mixes two dress codes.`;
+ if(["crew","kpolo","sweat"].includes(t)&&l==="cardigan")return "A sweater under a cardigan is too much knit for one outfit.";
+ if(["crew","kpolo","sweat","qz"].includes(t)&&l==="vest")return `A vest over a ${KIND[t]} adds bulk right at the middle. Save the vest for shirts and henleys.`;
+ if(COLLAR.has(t)&&["shirtjac","denimjkt","cordjkt"].includes(l))return `A ${KIND[t]} under a ${KIND[l]} stacks two collars and adds bulk at the chest.`;
+ if(t==="sweat"&&["coat","blazer"].includes(l))return `A sweatshirt under a ${KIND[l]} looks unfinished. Use a knit sweater instead.`;
+ return null;
+}
+/* The stylist: hard rules (incl. the framework) reject an outfit; soft rules score it and explain why */
+function evaluate(o,ctx){
+ ctx=ctx||{};
+ const T=P[o.t[0]],B=P[o.b[0]],S=P[o.s[0]],L=o.l[0]==="none"?null:P[o.l[0]];
+ const tc=key(o.t),bc=key(o.b),sc=key(o.s),lc=L?key(o.l):null;
+ const pros=[],cons=[],soft=[];let score=0;
+ const add=(n,msg)=>{score+=n;if(msg)(n>=0?pros:soft).push(msg)};
+ const g=[T,L,B].filter(Boolean);
+ const mean=g.reduce((a,p)=>a+p.f,0)/g.length;
+ const hi=g.reduce((a,p)=>p.f>a.f?p:a),lo=g.reduce((a,p)=>p.f<a.f?p:a);
+ const kn=p=>KIND[p.kind],isPl=p=>plural.has(KIND[p.kind]);
+ /* 1. the 60-30-10 rule and the designer formulas */
+ const fm=bestFormula(o,ctx.formula);
+ if(!fm){cons.push(ctx.formula&&ctx.formula!=="any"?`These colors don't follow the ${FBY[ctx.formula].name} formula (${FBY[ctx.formula].recipe.toLowerCase()}).`:"The colors don't land on 60-30-10: it needs a neutral base covering about 60%, a supporting color about 30%, and a small accent.")}
+ /* 3. styling and layering strategy */
+ const AC=hasA(o)?P[o.a[0]]:null,ac=AC?key(o.a):null;
+ const face=[["top",o.t],["layer",o.l],["accent",o.a||["none",0]]].filter(([,x])=>x[0]!=="none").map(([w,x])=>[w,coolNearFace(x)]).find(([,c])=>c);
+ if(AC){const ak=AC.kind;
+  if((ak==="tie"||ak==="ktie")&&!["shirt","denim","flannel"].includes(T.kind))cons.push(`A ${KIND[ak]} needs a collared button-up shirt, not a ${KIND[T.kind]}.`);
+  if((ak==="tie"||ak==="ktie")&&(L&&["fleece","chore","denimjkt"].includes(L.kind)))cons.push(`A ${KIND[ak]} under a ${KIND[L.kind]} mixes two dress codes.`);
+  if(ak==="tie"&&mean<1.6)cons.push("A silk tie is too formal for this outfit. A knit tie or a scarf would sit better.");
+  if(ak==="psq"&&!(L&&["blazer","coat"].includes(L.kind)))cons.push("A pocket square needs a blazer or a tailored coat with a chest pocket.");
+  if(ak==="scarf"&&!L&&!["crew","kpolo","qz","flannel"].includes(T.kind))cons.push("A scarf needs a jacket or a sweater to sit on.");
+  if(L&&ac===lc&&ak!=="psq")cons.push(`A ${nm(ac)} ${KIND[ak]} disappears against the ${nm(lc)} layer.`);
+  if(ak==="psq"&&ac===lc)cons.push(`A ${nm(ac)} pocket square vanishes on a ${nm(lc)} blazer.`);}
+ if(face)cons.push(`The ${face[0]} reads as ${face[1]} next to your face. Deep Autumn needs warm lights there: cream, warm ivory, or camel.`);
+ const boldK=[tc,lc,bc,sc,ac].filter(k=>k&&BOLD.has(k));
+ const darkShare=(()=>{const A=areas(o);let s=0;[["t",o.t],["l",o.l],["b",o.b],["s",o.s]].forEach(([slot,x])=>{if(x[0]!=="none"&&DARKN.has(key(x)))s+=A[slot]});return s})();
+ if(boldK.length&&darkShare<0.08)cons.push(`Ground the ${nm(boldK[0])} with a dark neutral such as espresso or dark teal-navy.`);
+ /* stylist sense */
+ if(hi.f-lo.f>1)cons.push(`The ${kn(hi)} ${isPl(hi)?"are":"is"} much dressier than the ${kn(lo)}.`);
+ if(Math.abs(S.f-mean)>0.75)cons.push(`The ${kn(S)} are too ${S.f>mean?"dressy":"casual"} for the rest of the outfit.`);
+ if(T.v==="sport"&&L&&L.v==="work")cons.push(`A performance knit and a rugged ${kn(L)} come from different worlds.`);
+ if(L){const lp=layerProblem(T,L);if(lp)cons.push(lp)}
+ if(L&&tc===lc)cons.push(`The ${nm(lc)} layer disappears into the ${nm(tc)} top. Pick a layer in a different color.`);
+ if(!L&&tc===bc)cons.push(`A ${nm(tc)} top with ${nm(bc)} pants and no layer reads like a uniform.`);
+ if(L&&LIGHT.has(lc)&&LIGHT.has(bc))cons.push(`A ${nm(lc)} layer with ${nm(bc)} pants washes out. One of them should be darker.`);
+ if(!L&&LIGHT.has(tc)&&LIGHT.has(bc))cons.push("A light top and light pants with nothing to break them up make the whole frame read wider.");
+ if(fm){
+  const pct=v=>Math.round(v*100)+"%";
+  const names=ks=>[...new Set(ks)].map(nm).join(" and ");
+  add(fm.F.id==="classic"?1.5:2.5,`${fm.F.id==="classic"?"Classic 60-30-10":`${fm.F.name} (${fm.F.fam.toLowerCase()})`}: ${names(fm.baseK)} base ${pct(fm.base)}, ${names(fm.secKs&&fm.secKs.length?fm.secKs:[fm.secK])} ${pct(fm.sec)}${fm.accK?`, ${nm(fm.accK)} accent ${pct(fm.acc)}`:""}.`);
+  score+=fm.fit*2;
+  if(!fm.accK)add(-0.9,`For the last 10%, add a small ${fm.F.acc.filter(k=>k!==fm.secK).map(nm).slice(0,2).join(" or ")} accent, like a scarf, tie, or pocket square.`);
+  else if(AC&&fm.accK===ac)add(0.4,`The ${nm(ac)} ${KIND[AC.kind]} is the 10% accent: a small pop of intensity, exactly where the framework puts it.`);
+  if(boldK.length&&darkShare>=0.08)add(0.5,`The ${nm(boldK[0])} is grounded by a dark neutral, so it reads rich instead of loud.`);
+ }
+ if(T.v==="sport"&&B.v==="work")add(-1,"Performance knits look sharper with chinos than with rugged denim.");
+ if(L){if(L.kind==="vest")add(0.5,"Worn open, the vest adds two vertical lines down your front.");else add(1,`The open ${kn(L)} adds two vertical lines down your front, which slims the torso.`)}
+ else if(T.kind==="tee")add(-1,"A tee on its own clings at the midsection. An open layer would fix that.");
+ else if(["henley","sweat","hoodie"].includes(T.kind))add(-0.5,`A ${kn(T)} works alone, but an open layer over it would be more flattering.`);
+ if(L&&LIGHT.has(tc)&&LIGHT.has(lc))add(-1,"A light layer over a light top loses the framing effect.");
+ if(L&&tc===bc)add(0.5,`The ${nm(tc)} top and pants make one long column under the open layer, a classic slimming trick.`);
+ const outerHex=L?hexOf(o.l):hexOf(o.t);
+ if(lumHex(outerHex)+0.1<lumHex(hexOf(o.b)))add(0.5,"Darker on top and lighter below balances your proportions.");
+ else if(!L&&lumHex(hexOf(o.t))>lumHex(hexOf(o.b))+0.25)add(-1,"A light top over darker pants puts the eye on your widest area.");
+ /* mix textures */
+ const tex=[T,L,B].filter(Boolean).map(p=>TEXTURE[p.kind]||p.kind);
+ const rich=[tc,lc,bc].filter(k=>k&&!LIGHT.has(k)&&!DARKN.has(k));
+ const andJoin=a=>a.length<3?a.join(" and "):a.slice(0,-1).join(", ")+", and "+a[a.length-1];
+ if(new Set(tex).size===tex.length&&tex.length>=2)add(0.5,`${cap(andJoin(tex))}: different fabrics give the colors contrast without clashing.`);
+ else if(rich.length>=2)add(-0.5,"Two rich colors in the same fabric can clash. Change the texture of one piece.");
+ if(B.kind==="jeans"&&L&&L.kind==="denimjkt")add(-0.75,"Denim on denim is a lot of one fabric on a broad frame.");
+ if(LIGHT.has(sc)&&LIGHT.has(bc))add(-1,`Light shoes with ${nm(bc)} pants blur together.`);
+ else if(["loafer","chelsea"].includes(S.kind)&&B.kind==="chino")add(0.5,`${cap(kn(S))} sharpen chinos without making the outfit formal.`);
+ else if(mean>=1.9&&lumHex(hexOf(o.s))<lumHex(hexOf(o.b)))add(0.5,"Shoes darker than the pants keep a dressier outfit grounded.");
+ const brands=new Set(g.map(p=>p.b));
+ if(!ctx.single&&g.length>=3&&brands.size===1)add(-0.5,"Head to toe in one brand looks like a catalog. Swap one piece.");
+ score+=[T,L,B,S].filter(p=>p&&p.fav).length*0.1;
+ const mde=[o.t,o.l,o.b,o.s,o.a||["none",0]].filter(x=>x[0]!=="none").map(x=>CR(x)[4]||0);
+ score-=mde.reduce((a,b)=>a+b,0)/mde.length/15;
+ if(ctx.occ==="work"){if(mean>=1.75&&mean<=2.5)add(1.5,"Right level of polish for the office.");else if(mean<1.5)add(-2,"Too casual for most offices.")}
+ if(ctx.occ==="weekend"){if(mean<=1.75)add(1.5,"Relaxed enough for the weekend.");else if(mean>=2.25)add(-1,"Dressier than a weekend needs.")}
+ if(ctx.occ==="date"){if([tc,lc,bc].filter(c=>c&&(DARKN.has(c)||["wine","burg","forest","moss","teal","turq"].includes(c))).length>=2)add(1,"Deep, rich colors look great in evening light.");if(mean>=1.5&&mean<=2.5)add(1,"Smart without looking like work.")}
+ return {ok:cons.length===0,score,pros,cons,soft,mean,fm};
+}
+function grade(r){if(!r.ok)return["Skip this combo","no"];if(r.score>=5)return["Stylist pick",""];if(r.score>=3.5)return["Strong",""];if(r.score>=2)return["Good",""];return["Wearable","meh"]}
+const formality=m=>m<1.4?"Casual":m<1.9?"Smart casual":m<2.4?"Business casual":"Dressy casual";
+const PRODS=Object.values(P);
+const byCat=cat=>PRODS.filter(p=>p.cat===cat).sort((a,b)=>(b.fav-a.fav)||a.b.localeCompare(b.b)||a.n.localeCompare(b.n));
+/* color-match strictness: how close a piece must measure to your card */
+const STRICT={exact:{all:3,label:"Near-exact (ΔE ≤ 3)"},strict:{all:5,label:"Very close (ΔE ≤ 5)"},face:{face:5,rest:8,label:"Very close at face, close below"},all:{all:8,label:"All close (ΔE ≤ 8)"}};
+let STRICTNESS="face";
+function limitFor(cat){const s=STRICT[STRICTNESS];if(s.all)return s.all;return(cat==="top"||cat==="layer"||cat==="acc")?s.face:s.rest}
+const OPT={top:[],layer:[["none",0]],bottom:[],shoe:[],acc:[["none",0]]};
+function buildOPT(){["top","layer","bottom","shoe","acc"].forEach(cat=>{OPT[cat].length=0;if(cat==="layer"||cat==="acc")OPT[cat].push(["none",0]);byCat(cat).forEach(p=>p.c.forEach((c,i)=>{if((c[4]||0)<=limitFor(cat)+1e-9)OPT[cat].push([p.id,i])}))})}
+buildOPT();
+
+/* ===== builder UI ===== */
+const ctx=()=>({formula:$("sFormula").value,occ:$("sOcc").value});
+function label(x,cat){if(x[0]==="none")return cat==="acc"?"No accent piece":"No layer";const p=P[x[0]],c=CR(x);return `${p.fav?"★ ":""}${c[1]} · ${p.b} ${p.n} (${p.s})`}
+function fillSelects(){[["sTop","top"],["sLay","layer"],["sBot","bottom"],["sShoe","shoe"],["sAcc","acc"]].forEach(([sid,cat])=>{const s=$(sid);if(!s)return;s.innerHTML="";OPT[cat].forEach((x,i)=>{const o=document.createElement("option");o.value=i;o.textContent=label(x,cat);s.appendChild(o)})});$("accRow").hidden=OPT.acc.length<2}
+fillSelects();
+/* formula menu */
+(function(){const s=$("sFormula");const add=(v,t,parent)=>{const o=document.createElement("option");o.value=v;o.textContent=t;(parent||s).appendChild(o)};add("any","Any formula");
+ [...new Set(FORMULAS.map(f=>f.fam))].forEach(fam=>{const og=document.createElement("optgroup");og.label=fam==="60-30-10"?"General rule":fam;FORMULAS.filter(f=>f.fam===fam).forEach(f=>add(f.id,`${f.name}: ${f.recipe}`,og));s.appendChild(og)})})();
+Object.entries(STRICT).forEach(([k,v])=>{const o=document.createElement("option");o.value=k;o.textContent=v.label;$("sMatch").appendChild(o)});
+$("sMatch").value=STRICTNESS;
+const brandsWith=cat=>new Set(OPT[cat].filter(x=>x[0]!=="none").map(x=>P[x[0]].b));
+/* a brand qualifies for Single Brands only if at least one of its own top + pants outfits passes the framework at the current color match */
+let SINGLE_OK=null;
+function singlePieces(brand,c){const T=ff(OPT.top,"top",c.formula).filter(x=>P[x[0]].b===brand),L=ff(OPT.layer,"layer",c.formula).filter(x=>x[0]==="none"||P[x[0]].b===brand),B=ff(OPT.bottom,"bottom",c.formula).filter(x=>P[x[0]].b===brand),own=ff(OPT.shoe,"shoe",c.formula).filter(x=>P[x[0]].b===brand),any=ff(OPT.shoe,"shoe",c.formula);return{T,L,B,own,any}}
+function anyPass(T,L,B,S,c){if(!T.length||!B.length||!S.length)return false;const total=T.length*L.length*B.length*S.length;
+ if(total<=8000){for(const t of T)for(const l of L)for(const b of B)for(const s of S)if(evaluate({t,l,b,s},{...c,single:true}).ok)return true;return false}
+ for(let n=0;n<8000;n++)if(evaluate({t:pick(T),l:n%4===0?["none",0]:pick(L),b:pick(B),s:pick(S)},{...c,single:true}).ok)return true;return false}
+function singleBrands(){if(!SINGLE_OK){SINGLE_OK=new Set();const t=brandsWith("top"),b=brandsWith("bottom");const c={formula:"any",occ:"any"};
+ [...t].filter(x=>b.has(x)).forEach(br=>{const p=singlePieces(br,c);if(anyPass(p.T,p.L,p.B,p.own,c)||anyPass(p.T,p.L,p.B,p.any,c))SINGLE_OK.add(br)})}
+ return [...SINGLE_OK].sort((a,b)=>a.localeCompare(b))}
+function fillBrandSelect(){const s=$("sBrand"),cur=s.value;s.innerHTML="";const o0=document.createElement("option");o0.value="rotate";o0.textContent="Each brand in turn";s.appendChild(o0);singleBrands().forEach(b=>{const o=document.createElement("option");o.value=b;o.textContent=b+(FAVB.has(b)?" ★":"");s.appendChild(o)});s.value=[...s.options].some(o=>o.value===cur)?cur:"rotate"}
+fillBrandSelect();
+function stat(){const ncol=PRODS.reduce((a,p)=>a+p.c.filter(c=>(c[4]||0)<=limitFor(p.cat)+1e-9).length,0);const np=PRODS.filter(p=>p.c.some(c=>(c[4]||0)<=limitFor(p.cat)+1e-9)).length;const nb=new Set(PRODS.filter(p=>p.c.some(c=>(c[4]||0)<=limitFor(p.cat)+1e-9)).map(p=>p.b)).size;$("stat").textContent=`${np} pieces in ${ncol} pixel-checked colors from ${nb} brands at the current color match (${STRICT[STRICTNESS].label.replace(/ \(.*/,"").toLowerCase()}).`}
+stat();
+const NOA=["none",0];
+const cur=()=>({t:OPT.top[+$("sTop").value],l:OPT.layer[+$("sLay").value],b:OPT.bottom[+$("sBot").value],s:OPT.shoe[+$("sShoe").value],a:OPT.acc[+$("sAcc").value]||NOA});
+const recent={top:[],layer:[],bottom:[],shoe:[],acc:[]};
+function remember(o){[["top",o.t],["layer",o.l],["bottom",o.b],["shoe",o.s],["acc",o.a||NOA]].forEach(([c,x])=>{if(x[0]==="none")return;const r=recent[c];r.push(x[0]);const cap2={top:12,layer:4,bottom:5,shoe:3,acc:3}[c];while(r.length>cap2)r.shift()})}
+const idxOf=(cat,x)=>OPT[cat].findIndex(y=>y[0]===x[0]&&y[1]===x[1]);
+function setOutfit(o,keep){o={...o,a:o.a||NOA};["t","l","b","s","a"].forEach((k,i)=>{const cat=["top","layer","bottom","shoe","acc"][i];const id=["sTop","sLay","sBot","sShoe","sAcc"][i];let j=idxOf(cat,o[k]);if(j<0){OPT[cat].push(o[k]);const op=document.createElement("option");op.value=OPT[cat].length-1;op.textContent=label(o[k],cat)+" (outside current color match)";$(id).appendChild(op);j=OPT[cat].length-1}$(id).value=j});if(!keep)remember(o);render()}
+/* the stylist's last step: if the outfit has no 10% accent, try a tie, scarf, or pocket square that completes the formula */
+function addAccent(o,c,opts){opts=opts||{};if(OPT.acc.length<2)return o;const base=evaluate(o,{...c,single:opts.single});if(base.fm&&base.fm.accK)return o;
+ let best=null;const used=new Set([o.t,o.l,o.b,o.s].filter(x=>x[0]!=="none").map(x=>P[x[0]].b));
+ let pool=ff(OPT.acc,"acc",c.formula).filter(x=>x[0]!=="none");
+ if(opts.distinct)pool=pool.filter(x=>!used.has(P[x[0]].b));
+ if(opts.brand){const own=pool.filter(x=>P[x[0]].b===opts.brand);if(own.length)pool=own}
+ for(const a of pool){const oa={...o,a};const r=evaluate(oa,{...c,single:opts.single});if(!r.ok||!r.fm||r.fm.accK!==key(a))continue;const sc=r.score-(recent.acc.includes(a[0])?0.6:0)+Math.random()*0.3;if(!best||sc>best[0])best=[sc,oa,r.score]}
+ return best&&best[2]>base.score?best[1]:o}
+/* search: sample outfits, keep the ones that pass every rule, return one of the best */
+function search(tops,lays,bots,shoes,c,opts){
+ opts=opts||{};const N=opts.n||3000,cands=[];
+ const exhaustive=tops.length*lays.length*bots.length*shoes.length<=N;
+ const accs=OPT.acc.length>1?ff(OPT.acc,"acc",c.formula).filter(x=>x[0]!=="none"):[];
+ const consider=o=>{if(opts.distinct){const bs=[o.t,o.l,o.b,o.s].filter(x=>x[0]!=="none").map(x=>P[x[0]].b);if(new Set(bs).size!==bs.length)return}
+  let r=evaluate(o,{...c,single:opts.single});
+  if(!r.ok&&accs.length&&r.cons.length===1&&!r.fm){for(let k=0;k<4;k++){const a=pick(accs);if(opts.distinct&&[o.t,o.l,o.b,o.s].some(x=>x[0]!=="none"&&P[x[0]].b===P[a[0]].b))continue;const r2=evaluate({...o,a},{...c,single:opts.single});if(r2.ok){o={...o,a};r=r2;break}}}
+  if(!r.ok)return;
+  const rep=(recent.top.includes(o.t[0])?0.8:0)+(o.l[0]!=="none"&&recent.layer.includes(o.l[0])?1.1:0)+(recent.bottom.includes(o.b[0])?0.9:0)+(recent.shoe.includes(o.s[0])?0.5:0);
+  cands.push([r.score-rep,o])};
+ if(exhaustive){for(const t of tops)for(const l of lays)for(const b of bots)for(const s of shoes)consider({t,l,b,s})}
+ else for(let n=0;n<N;n++)consider({t:pick(tops),l:n%4===0?["none",0]:pick(lays),b:pick(bots),s:pick(shoes)});
+ if(!cands.length)return null;
+ cands.sort((a,b)=>b[0]-a[0]);const best=cands[0][0];const o=pick(cands.filter(x=>x[0]>=best-1).slice(0,12))[1];
+ return o.a&&o.a[0]!=="none"?o:addAccent({...o,a:NOA},c,opts);
+}
+let mixIdx=-1,singleIdx=-1;
+/* when a formula is chosen, only consider pieces in that formula's colors (shoes may also be any grounding neutral) */
+function ff(list,cat,fid){if(!fid||fid==="any")return list;const F=FBY[fid];const ok=new Set([...F.base,...F.sec,...F.acc]);return list.filter(x=>x[0]==="none"||ok.has(key(x))||(cat==="shoe"&&(DARKN.has(key(x))||key(x)==="brown"||LIGHT.has(key(x)))))}
+let FEAS={};
+function feasibility(){FEAS={};for(const F of FORMULAS){const T=ff(OPT.top,"top",F.id),L=ff(OPT.layer,"layer",F.id),B=ff(OPT.bottom,"bottom",F.id),S=ff(OPT.shoe,"shoe",F.id),A=[NOA,...ff(OPT.acc,"acc",F.id).filter(x=>x[0]!=="none"&&F.acc.includes(key(x)))];let ok=false;
+ if(T.length&&B.length&&S.length){const total=T.length*L.length*B.length*S.length*A.length;
+  if(total<=8000){outer:for(const t of T)for(const l of L)for(const b of B)for(const s of S)for(const a of A){if(evaluate({t,l,b,s,a},{formula:F.id}).ok){ok=true;break outer}}}
+  else for(let n=0;n<12000&&!ok;n++){if(evaluate({t:pick(T),l:n%4===0?NOA:pick(L),b:pick(B),s:pick(S),a:n%2?NOA:pick(A)},{formula:F.id}).ok)ok=true}}
+ FEAS[F.id]=ok}
+ [...$("sFormula").querySelectorAll("option")].forEach(o=>{if(o.value==="any")return;const F=FBY[o.value];o.disabled=!FEAS[o.value];o.textContent=`${F.name}: ${F.recipe}`+(FEAS[o.value]?"":" (none in your size yet)")});
+ if($("sFormula").value!=="any"&&!FEAS[$("sFormula").value])$("sFormula").value="any";}
+/* every brand with at least one piece at the current color match, with its piece count */
+function allBrands(){const n={};["top","layer","bottom","shoe"].forEach(cat=>OPT[cat].forEach(x=>{if(x[0]==="none")return;const b=P[x[0]].b;n[b]=(n[b]||new Set()).add(x[0])}));return Object.keys(n).sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"})).map(b=>[b,n[b].size])}
+function fillLeadSelect(){const s=$("sLead"),cur=s.value;s.innerHTML="";const o0=document.createElement("option");o0.value="rotate";o0.textContent="Each brand in turn (A to Z)";s.appendChild(o0);allBrands().forEach(([b,k])=>{const o=document.createElement("option");o.value=b;o.textContent=`${b}${FAVB.has(b)?" ★":""} · ${k} piece${k>1?"s":""}`;s.appendChild(o)});s.value=[...s.options].some(o=>o.value===cur)?cur:"rotate"}
+/* build a mixed-brand outfit around one brand: that brand supplies one piece (any category it makes), every other piece comes from a different brand */
+function mixedAround(lead,c){
+ const cats=["top","layer","bottom","shoe"].sort(()=>Math.random()-.5);
+ for(const cat of cats){const own=ff(OPT[cat],cat,c.formula).filter(x=>x[0]!=="none"&&P[x[0]].b===lead);if(!own.length)continue;
+  const pool=k=>k===cat?own:ff(OPT[k],k,c.formula).filter(x=>x[0]==="none"||P[x[0]].b!==lead);
+  const o=search(pool("top"),pool("layer"),pool("bottom"),pool("shoe"),c,{distinct:true,n:4000});if(o)return o}
+ return null}
+function shuffleMixed(){
+ const c=ctx();const fixed=$("sLead").value!=="rotate";const leads=fixed?[$("sLead").value]:allBrands().map(x=>x[0]);
+ for(let tries=0;tries<leads.length;tries++){
+  let lead;if(fixed)lead=leads[0];else{mixIdx=(mixIdx+1)%leads.length;lead=leads[mixIdx]}
+  const o=mixedAround(lead,c);
+  if(o){setMode("mixed");$("brandnote").innerHTML=`<b>Mixed brands</b>, built around ${esc(lead)}: `+brandLine(o);setOutfit(o);return}
+  if(fixed)break;
+ }
+ $("brandnote").textContent=fixed?`No outfit built around ${$("sLead").value} passes the framework with this formula and color match. Try Any formula, a looser color match, or another brand.`:"No mixed-brand outfit passes the framework with this formula and color match. Try Any formula or a looser color match.";
+}
+function shuffleSingle(){
+ const c=ctx();const list=singleBrands();const fixed=$("sBrand").value!=="rotate";
+ const order=fixed?[$("sBrand").value]:list;
+ for(let tries=0;tries<order.length;tries++){
+  if(!fixed)singleIdx=(singleIdx+1)%order.length;const brand=fixed?order[0]:order[singleIdx];
+  const {T:tops,L:lays,B:bots,own,any}=singlePieces(brand,c);
+  if(!tops.length||!bots.length){if(fixed)break;continue}
+  /* the brand's own shoes first; if none of them work, any brand's shoes */
+  let o=own.length?search(tops,lays,bots,own,c,{single:true,n:5000,brand}):null,ownShoes=!!o;
+  if(!o)o=search(tops,lays,bots,any,c,{single:true,n:5000,brand});
+  if(o){const parts=o.l[0]==="none"?"Top and pants are":"Top, layer, and pants are";const sb=P[o.s[0]].b;
+   const ab=o.a&&o.a[0]!=="none"?P[o.a[0]].b:null;const accNote=ab?(ab===brand?` The ${KIND[P[o.a[0]].kind]} is ${esc(brand)} too.`:` The ${KIND[P[o.a[0]].kind]} for the accent is ${dot(esc(ab))}`):"";
+   $("brandnote").innerHTML=`<b>Single brand: ${esc(brand)}</b>. ${parts} all ${esc(brand)}`+(ownShoes||sb===brand?`, and so are the shoes.`:own.length?`. None of ${esc(brand)}'s own shoes complete this look, so the shoes are ${dot(esc(sb))}`:`. ${esc(brand)} doesn't make shoes in your palette, so the shoes are ${dot(esc(sb))}`)+accNote;setMode("single");setOutfit(o);return}
+  if(fixed)break;
+ }
+ $("brandnote").textContent=fixed?`No ${$("sBrand").value} outfit passes the framework with this formula and color match. Try Any formula, a looser color match, or another brand.`:"No single-brand outfit passes with this formula and color match. Try Any formula or a looser color match.";
+}
+const dot=s=>/[.!?]$/.test(s)?s:s+".";
+function setMode(m){$("shuffleMixed").setAttribute("aria-pressed",String(m==="mixed"));$("shuffleSingle").setAttribute("aria-pressed",String(m==="single"))}
+const brandLine=o=>[["Top",o.t],["Layer",o.l],["Pants",o.b],["Shoes",o.s],["Accent",o.a||NOA]].filter(([,x])=>x[0]!=="none").map(([k,x])=>`${k} ${esc(P[x[0]].b)}`).join(" · ");
+const distinctBrands=o=>{const bs=[o.t,o.l,o.b,o.s,o.a||NOA].filter(x=>x[0]!=="none").map(x=>P[x[0]].b);return new Set(bs).size===bs.length};
+function chipHTML(x){return `<span class="dot" style="background:${hexOf(x)}" title="Measured ${hexOf(x)}"></span>`}
+function matchHTML(x){const c=CR(x);return `<span class="match"><span>measured ${hexOf(x)} →</span><span class="to"><span class="dot sm" style="background:${PAL[c[0]][1]}"></span> ${esc(PAL[c[0]][0])} ${PAL[c[0]][1]} · ΔE&nbsp;${(c[4]||0).toFixed(1)}</span></span>`}
+function pline(k,x){if(!x||x[0]==="none")return k==="Accent"?"":`<div class="pline"><span class="k">${k}</span><span class="v">None</span></div>`;
+ const p=P[x[0]];return `<div class="pline"><span class="k">${k}</span><span class="v">${chipHTML(x)} <b>${esc(cname(x))}</b> · <a href="${esc(link(x))}" target="_blank" rel="noopener">${esc(full(p))}</a> <span class="store">${p.fav?"★ ":""}${esc(p.s)}</span><br>${matchHTML(x)}</span></div>`}
+function paint(fig,o){const th=hexOf(o.t),lh=o.l[0]==="none"?th:hexOf(o.l),bh=hexOf(o.b),sh=hexOf(o.s);
+ let ae=fig.querySelector(".acc");if(!ae){ae=document.createElement("i");ae.className="acc";fig.querySelector(".torso").appendChild(ae)}
+ if(o.a&&o.a[0]!=="none"){const k=P[o.a[0]].kind;ae.className="acc "+(k==="ktie"?"tie":k);ae.style.background=hexOf(o.a);ae.hidden=false}else ae.hidden=true;
+ fig.querySelectorAll(".lay").forEach(e=>e.style.background=lh);
+ fig.querySelector(".top").style.background=th;
+ fig.querySelectorAll(".legs span").forEach(e=>e.style.background=bh);
+ fig.querySelectorAll(".feet span").forEach(e=>e.style.background=sh);}
+function ratioBar(fm){if(!fm)return "";const seg=(v,k,lab)=>v>0?`<span style="flex:${v};background:${PAL[k][1]}" title="${lab} ${Math.round(v*100)}%"></span>`:"";const fg=k=>lumHexSafe(PAL[k][1])>0.55?"#2b1f17":"#fff8ef";
+ return `<div class="ratio"><div class="rbar">${seg(fm.base,fm.baseK[0],"Base")}${seg(fm.sec,fm.secK,"Secondary")}${fm.accK?seg(fm.acc,fm.accK,"Accent"):""}</div><div class="rlab"><span>Base ${Math.round(fm.base*100)}%</span><span>Secondary ${Math.round(fm.sec*100)}%</span><span>Accent ${Math.round(fm.acc*100)}%</span><span class="target">target 60 · 30 · 10</span></div></div>`}
+const lumHexSafe=h=>lumHex(h);
+function render(){const o=cur();paint($("fig"),o);
+ $("desc").innerHTML=pline("Top",o.t)+pline("Layer",o.l)+pline("Pants",o.b)+pline("Shoes",o.s)+pline("Accent",o.a);
+ const r=evaluate(o,ctx());const[gname,gcls]=grade(r);
+ const items=[...r.cons.map(m=>`<li class="con">${esc(m)}</li>`),...r.pros.map(m=>`<li>${esc(m)}</li>`),...r.soft.map(m=>`<li class="soft">${esc(m)}</li>`)];
+ const fb=r.fm?`<span class="fbadge">${esc(r.fm.F.name)}</span>`:"";
+ $("verdict").innerHTML=`<div class="vhead"><span class="grade ${gcls}">${gname}</span>${fb}<span class="ftag">${formality(r.mean)}</span></div>${ratioBar(r.fm)}<ul class="why">${items.join("")}</ul>`;}
+["sOcc","sFormula"].forEach(id=>$(id).addEventListener("change",render));
+["sTop","sLay","sBot","sShoe","sAcc"].forEach(id=>$(id).addEventListener("change",()=>{setMode(null);$("brandnote").innerHTML=`<b>Your own pick</b>: ${brandLine(cur())}. The verdict below checks it against the framework.`;render()}));
+$("shuffleMixed").addEventListener("click",shuffleMixed);
+$("shuffleSingle").addEventListener("click",shuffleSingle);
+$("sBrand").addEventListener("change",shuffleSingle);
+fillLeadSelect();$("sLead").addEventListener("change",shuffleMixed);
+$("sMatch").addEventListener("change",()=>{const keepO=cur();STRICTNESS=$("sMatch").value;buildOPT();fillSelects();SINGLE_OK=null;singleIdx=-1;mixIdx=-1;fillBrandSelect();fillLeadSelect();stat();drawPalette();drawShop();estimate();feasibility();drawFormulas();
+ const ok=["t","l","b","s"].every((k,i)=>keepO[k][0]==="none"||idxOf(["top","layer","bottom","shoe"][i],keepO[k])>=0);if(ok)setOutfit(keepO,true);else shuffleMixed()});
+
+/* ===== stylist looks ===== */
+const tpl=document.createElement("template");
+const li=(k,x)=>x[0]==="none"?"":`<li>${k}: <span class="dot sm" style="background:${hexOf(x)}"></span> <b>${esc(cname(x))}</b> <a href="${esc(link(x))}" target="_blank" rel="noopener">${esc(full(P[x[0]]))}</a> <span class="de">ΔE ${(CR(x)[4]||0).toFixed(1)}</span></li>`;
+LOOKS.forEach(([name,note,t,l,b,s,a])=>{a=a||NOA;const o={t,l,b,s,a};const r=evaluate(o,{});const[gname,gcls]=grade(r);
+ tpl.innerHTML=`<article class="look"><div class="figure" aria-hidden="true"><div class="torso"><span class="lay"></span><span class="top"></span><span class="lay"></span></div><div class="legs"><span></span><span></span></div><div class="feet"><span></span><span></span></div></div><div><h3>${esc(name)}</h3><div class="meta">${r.fm?`<span class="fbadge">${esc(r.fm.F.name)}</span>`:""}<span class="tagchip">${formality(r.mean)}</span><span class="grade ${gcls}">${gname}</span></div><p class="lnote">${esc(note)}</p>${ratioBar(r.fm)}<ul>${li("Top",t)}${li("Layer",l)}${li("Pants",b)}${li("Shoes",s)}${li("Accent",a)}</ul><button type="button" class="tryit">Open in the builder</button></div></article>`;
+ const el=tpl.content.firstElementChild;paint(el.querySelector(".figure"),o);el.querySelector(".tryit").addEventListener("click",()=>{setMode(null);$("brandnote").innerHTML=`<b>Saved look</b>: ${esc(name)}. ${brandLine(o)}`;setOutfit(o);$("builder").scrollIntoView({behavior:"smooth",block:"start"})});$("looks").appendChild(el);});
+
+/* ===== shop by color + shopping list ===== */
+let palFilter=null;
+const okCol=(p,c)=>(c[4]||0)<=limitFor(p.cat)+1e-9;
+function counts(){const n={};PRODS.forEach(p=>p.c.forEach(c=>{if(okCol(p,c))n[c[0]]=(n[c[0]]||0)+1}));return n}
+function drawPalette(){const C=counts();const total=Object.values(C).reduce((a,b)=>a+b,0);
+ let h=`<button type="button" class="pal all${palFilter===null?" on":""}" data-k=""><span class="pn">All colors</span><span class="pc">${total}</span></button>`;
+ GROUPS.forEach(([g,ks])=>{h+=`<p class="pgroup">${g}</p>`+ks.map(k=>`<button type="button" class="pal${palFilter===k?" on":""}" data-k="${k}" ${C[k]?"":"disabled"}><span class="sw" style="background:${PAL[k][1]}"></span><span class="pn">${PAL[k][0]}<span class="hx">${PAL[k][1]}</span></span><span class="pc">${C[k]||0}</span></button>`).join("")});
+ $("palgrid").innerHTML=h;
+ $("palgrid").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{palFilter=b.dataset.k||null;drawPalette();drawShop()}));
+}
+const CATS=[["top","Shirts and sweaters"],["layer","Layers"],["bottom","Pants"],["shoe","Shoes"],["acc","Accent pieces"]];
+function drawShop(){
+ $("shop").innerHTML="";const C=counts();
+ $("shopnote").textContent=palFilter?`Showing only pieces that measured as ${PAL[palFilter][0].toLowerCase()} ${PAL[palFilter][1]} (${C[palFilter]||0} colors). Tap "All colors" to see everything.`:"";
+ CATS.forEach(([cat,title])=>{const list=byCat(cat).filter(p=>p.c.some(c=>okCol(p,c)&&(!palFilter||c[0]===palFilter)));if(!list.length)return;const wrap=document.createElement("div");wrap.className="cat";let h=`<h3>${title} · ${list.length}</h3>`;
+  list.forEach(p=>{
+   const cols=p.c.map((c,i)=>[c,i]).filter(([c])=>okCol(p,c)&&(!palFilter||c[0]===palFilter));
+   const firstLink=link([p.id,cols[0][1]]);
+   h+=`<div class="prod"><div class="name"><span class="brand">${esc(p.b)}${p.b!==p.s?` · at ${esc(p.s)}`:""}${p.fav?' <span class="type">★ favorite</span>':''}</span>${esc(p.n)}${p.pr?` <span class="price">${esc(p.pr)}</span>`:""}</div>
+   <div class="sw">${cols.map(([c,i])=>{const x=[p.id,i];const nmHTML=c[2]?`<a href="${esc(link(x))}" target="_blank" rel="noopener">${esc(c[1])}</a>`:esc(c[1]);return `<span class="chip">${chipHTML(x)}${nmHTML}<span class="code">${hexOf(x)}</span><span class="arrow">→</span><span class="dot sm" style="background:${PAL[c[0]][1]}"></span><span class="pm">${esc(PAL[c[0]][0])} <span class="code">${PAL[c[0]][1]}</span> <span class="de">ΔE ${(c[4]||0).toFixed(1)} ${deLabel(c[4]||0)}</span></span></span>`}).join("")}</div>
+   <p class="why2">${esc(p.w)}</p>
+   <a class="go" href="${esc(firstLink)}" target="_blank" rel="noopener">Open at ${esc(p.s)} ↗</a></div>`;});
+  wrap.innerHTML=h;$("shop").appendChild(wrap);});
+}
+drawPalette();drawShop();
+function estimate(){setTimeout(()=>{let pass=0;const N=20000;for(let n=0;n<N;n++){const o={t:pick(OPT.top),l:pick(OPT.layer),b:pick(OPT.bottom),s:pick(OPT.shoe)};if(evaluate(o,{}).ok)pass++}
+ const total=OPT.top.length*OPT.layer.length*OPT.bottom.length*OPT.shoe.length;const est=Math.round(total*pass/N);const r=est>1e6?Math.round(est/1e5)/10+" million":est>=1e4?Math.round(est/1e3).toLocaleString()+",000":est.toLocaleString();
+ $("count").textContent=`About ${r} complete outfits pass the framework and every styling rule at this color match, estimated from a random sample of ${N.toLocaleString()}.`},60)}
+function drawFormulas(){$("formulas").innerHTML=FORMULAS.map(F=>`<div class="fcard"><span class="fam">${esc(F.fam)}</span><h3>${esc(F.name)}</h3><div class="fsw" aria-hidden="true"><span style="flex:6;background:${PAL[F.base[0]][1]}"></span><span style="flex:3;background:${PAL[F.sec[0]][1]}"></span><span style="flex:1;background:${PAL[F.acc[0]][1]}"></span></div><p>${esc(F.recipe)}.</p>${FEAS[F.id]?`<button type="button" class="tryit" data-f="${F.id}">Shuffle this formula</button>`:`<p class="nofit">No outfit in your size passes this formula at the current color match yet. ${F.id==="greens"?"It needs olive or moss pants, and none in your size measured close enough yet.":F.id==="turqearth"||F.id==="tealrust"?"It works if you allow close matches near the face.":"No piece in your size measured close enough to these colors."}</p>`}</div>`).join("");
+ $("formulas").querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{$("sFormula").value=b.dataset.f;shuffleMixed();$("builder").scrollIntoView({behavior:"smooth",block:"start"})}))}
+feasibility();drawFormulas();
+setOutfit(DEFAULT_OUTFIT,true);estimate();
+if(distinctBrands(DEFAULT_OUTFIT)){setMode("mixed");$("brandnote").innerHTML=`<b>Mixed brands</b>: ${brandLine(DEFAULT_OUTFIT)}. Tap either shuffle for a new outfit.`}
+
+</script>
+
+</body>
+</html>

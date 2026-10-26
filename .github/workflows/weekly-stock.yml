@@ -1,0 +1,62 @@
+name: Weekly stock check
+
+on:
+  schedule:
+    - cron: "0 13 * * 1" # every Monday, 13:00 UTC (6 AM Pacific)
+  workflow_dispatch: # "Run workflow" button on the Actions tab
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: stock-and-pages
+  cancel-in-progress: false
+
+jobs:
+  check-and-publish:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Check every product link and color for stock
+        if: github.event_name != 'push'
+        run: node scripts/check-stock.mjs
+
+      - name: Save this week's results
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "stock-check-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/stock.json data/stock-report.md
+          if git diff --cached --quiet; then
+            echo "No changes in stock."
+          else
+            git commit -m "Weekly stock check $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Build the app (sold-out colors hidden)
+        run: node scripts/build.mjs
+
+      - name: Show the summary on the run page
+        run: cat data/stock-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - id: deploy
+        uses: actions/deploy-pages@v4

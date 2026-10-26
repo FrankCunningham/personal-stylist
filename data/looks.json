@@ -1,0 +1,482 @@
+{
+ "defaultOutfit": {
+  "t": [
+   "p_d1ea38",
+   0
+  ],
+  "l": [
+   "d_b1d4b0",
+   0
+  ],
+  "b": [
+   "u_78fc32",
+   0
+  ],
+  "s": [
+   "d_5e79b1",
+   0
+  ]
+ },
+ "looks": [
+  [
+   "Cream polo, Carhartt brown",
+   "Browns & Lights: a cream Perry Ellis polo peeks out of a warm-brown Carhartt jacket, over chocolate UNIQLO pants and chocolate gore boots.",
+   [
+    "p_d1ea38",
+    0
+   ],
+   [
+    "d_b1d4b0",
+    0
+   ],
+   [
+    "u_78fc32",
+    0
+   ],
+   [
+    "d_5e79b1",
+    0
+   ]
+  ],
+  [
+   "Lambswool and duck canvas",
+   "Browns & Lights: a cream lambswool crewneck under a shearling-lined Carhartt duck jacket, espresso chinos, and espresso Chelsea boots.",
+   [
+    "u_a34c69",
+    0
+   ],
+   [
+    "d_709ebc",
+    0
+   ],
+   [
+    "t_101fdf",
+    1
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ],
+  [
+   "Cream lambswool, cinnamon suede",
+   "Browns & Lights: a cream UNIQLO lambswool crew under Thursday's cinnamon suede bomber, camel chinos, and coffee Perry Ellis dress shoes.",
+   [
+    "u_a34c69",
+    0
+   ],
+   [
+    "s_320e60",
+    0
+   ],
+   [
+    "d_a64407",
+    1
+   ],
+   [
+    "p_a96d36",
+    0
+   ]
+  ],
+  [
+   "Terracotta cashmere",
+   "Autumn Warmth: a terracotta cashmere sweater with cream chinos and espresso Chelsea boots. A burnt orange scarf would complete it.",
+   [
+    "u_4a59fa",
+    1
+   ],
+   [
+    "none",
+    0
+   ],
+   [
+    "d_30bc5b",
+    1
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ],
+  [
+   "Ginger spice and spray",
+   "Autumn Warmth: a terracotta sport shirt with cream chinos and cognac slip-ons. Warm, light, and easy.",
+   [
+    "d_1893c1",
+    0
+   ],
+   [
+    "none",
+    0
+   ],
+   [
+    "d_1e43ca",
+    0
+   ],
+   [
+    "d_4ac586",
+    0
+   ]
+  ],
+  [
+   "Clay pants under a camel trench",
+   "Autumn Warmth: BYLT's terracotta Clay pants with a cream lambswool crew and a camel trench. A burnt orange scarf would complete the 10%.",
+   [
+    "u_a34c69",
+    0
+   ],
+   [
+    "d_847e49",
+    0
+   ],
+   [
+    "s_6f75e2",
+    0
+   ],
+   [
+    "p_a96d36",
+    0
+   ]
+  ],
+  [
+   "Olive, forest, and duck brown",
+   "Rich Earth: an olive tee under a forest fleece, Carhartt-brown duck pants, and coffee boots. All three earth tones from your card.",
+   [
+    "d_b32178",
+    0
+   ],
+   [
+    "u_53030c",
+    3
+   ],
+   [
+    "d_d09045",
+    0
+   ],
+   [
+    "d_3c6355",
+    0
+   ]
+  ],
+  [
+   "Forest zip, chocolate base",
+   "Rich Earth: a forest-green quarter-zip on its own over chocolate pants and chocolate gore boots. Add an olive scarf for the last 10%.",
+   [
+    "i_579403",
+    2
+   ],
+   [
+    "none",
+    0
+   ],
+   [
+    "u_78fc32",
+    0
+   ],
+   [
+    "d_5e79b1",
+    0
+   ]
+  ],
+  [
+   "Wine flannel and espresso vest",
+   "Deep Jewel Tones: a deep-wine flannel under an espresso vest with chocolate pants and espresso Chelsea boots.",
+   [
+    "d_669c2f",
+    1
+   ],
+   [
+    "d_f4af8b",
+    0
+   ],
+   [
+    "u_78fc32",
+    0
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ],
+  [
+   "Maroon waffle, chocolate knit chinos",
+   "Deep Jewel Tones: a burgundy waffle henley under an espresso vest, chocolate knit chinos, and cognac slip-ons.",
+   [
+    "t_e18c77",
+    0
+   ],
+   [
+    "d_f4af8b",
+    0
+   ],
+   [
+    "t_3c5cdc",
+    0
+   ],
+   [
+    "d_4ac586",
+    0
+   ]
+  ],
+  [
+   "Cabernet and tobacco leather",
+   "Deep Jewel Tones: a burgundy Perry Ellis mock neck under Thursday's tobacco leather jacket, deep-wine Harbor Bay pants, and espresso Chelsea boots.",
+   [
+    "p_5234e8",
+    0
+   ],
+   [
+    "s_a40922",
+    0
+   ],
+   [
+    "d_e2af0b",
+    2
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ],
+  [
+   "Biscayne tee, reversible navy jacket",
+   "Teal & Rust: a deep turquoise Faherty tee shows under a dark teal-navy Toad&Co quilted shirt jacket, with dark-wash Harbor Bay jeans and terracotta Thursday moc-toe boots. The jacket reverses to a teal side if you want more color.",
+   [
+    "s_de428a",
+    0
+   ],
+   [
+    "s_b7bb75",
+    0
+   ],
+   [
+    "d_20192e",
+    0
+   ],
+   [
+    "s_29b735",
+    1
+   ]
+  ],
+  [
+   "Burgundy V-neck, forest fleece",
+   "Burgundy & Forest: a burgundy V-neck under a forest fleece, charcoal Perry Ellis chinos, and chocolate gore boots.",
+   [
+    "d_2f6357",
+    0
+   ],
+   [
+    "u_53030c",
+    3
+   ],
+   [
+    "d_30bc5b",
+    0
+   ],
+   [
+    "d_5e79b1",
+    0
+   ]
+  ],
+  [
+   "Herringbone wine, forest, charcoal",
+   "Burgundy & Forest: a deep-wine IZOD herringbone flannel under a forest fleece, charcoal-wash Levi's, and tan lace-up boots.",
+   [
+    "i_e6ea8d",
+    0
+   ],
+   [
+    "u_53030c",
+    3
+   ],
+   [
+    "d_f0fd85",
+    0
+   ],
+   [
+    "h_fd1921",
+    0
+   ]
+  ],
+  [
+   "Turquoise under tobacco leather",
+   "Turquoise & Warm Earth: a tobacco leather Thursday jacket and espresso Chelsea boots are the base, cream chinos are the support, and a deep turquoise Faherty tee is the 10% pop.",
+   [
+    "s_de428a",
+    0
+   ],
+   [
+    "s_a40922",
+    0
+   ],
+   [
+    "d_30bc5b",
+    1
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ],
+  [
+   "Cabernet under duck canvas",
+   "Classic 60-30-10: cream chinos and a brown canvas jacket carry the outfit, and a burgundy Perry Ellis mock neck is the pop.",
+   [
+    "p_5234e8",
+    0
+   ],
+   [
+    "d_709ebc",
+    0
+   ],
+   [
+    "d_30bc5b",
+    1
+   ],
+   [
+    "d_5e79b1",
+    0
+   ]
+  ],
+  [
+   "Wine skipper polo, Carhartt brown",
+   "Classic 60-30-10: a deep-wine knit polo under a shearling-lined duck jacket with cream chinos and chocolate boots.",
+   [
+    "u_491afa",
+    0
+   ],
+   [
+    "d_709ebc",
+    0
+   ],
+   [
+    "d_1e43ca",
+    0
+   ],
+   [
+    "d_5e79b1",
+    0
+   ]
+  ],
+  [
+   "Ginger spice under a trench",
+   "Classic 60-30-10: a camel trench and navy chinos as the base, with a terracotta shirt as the color.",
+   [
+    "d_1893c1",
+    0
+   ],
+   [
+    "d_847e49",
+    0
+   ],
+   [
+    "t_54c01e",
+    0
+   ],
+   [
+    "h_2fc6f0",
+    1
+   ]
+  ],
+  [
+   "Sycamore tee, brown fleece",
+   "Classic 60-30-10: an American Giant forest-green tee under a warm-brown UNIQLO fleece, cream chinos, and espresso Chelsea boots.",
+   [
+    "s_2fa4bc",
+    0
+   ],
+   [
+    "u_53030c",
+    2
+   ],
+   [
+    "d_1e43ca",
+    0
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ],
+  [
+   "All UNIQLO",
+   "Single brand, Browns & Lights: UNIQLO lambswool, fleece, and pants in cream, warm brown, and chocolate. UNIQLO doesn't make shoes, so they're G.H. Bass.",
+   [
+    "u_a34c69",
+    0
+   ],
+   [
+    "u_53030c",
+    2
+   ],
+   [
+    "u_78fc32",
+    0
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ],
+  [
+   "All Perry Ellis",
+   "Single brand: a burgundy mock neck, a dark teal-navy overcoat, charcoal chinos, and coffee oxfords, all Perry Ellis.",
+   [
+    "p_5234e8",
+    0
+   ],
+   [
+    "p_3e95bc",
+    0
+   ],
+   [
+    "d_30bc5b",
+    0
+   ],
+   [
+    "p_a96d36",
+    0
+   ]
+  ],
+  [
+   "All True Classic",
+   "Single brand: a burgundy fleece crew under a charcoal bomber with navy chinos. True Classic doesn't make shoes, so they're G.H. Bass camp mocs.",
+   [
+    "t_c277d2",
+    1
+   ],
+   [
+    "t_565887",
+    0
+   ],
+   [
+    "t_54c01e",
+    0
+   ],
+   [
+    "h_4923cd",
+    0
+   ]
+  ],
+  [
+   "All BYLT",
+   "Single brand: a deep-wine BYLT long sleeve under the camel Coastal Overshirt with terracotta Clay pants. BYLT doesn't make shoes, so they're G.H. Bass Chelsea boots.",
+   [
+    "s_92a0c7",
+    0
+   ],
+   [
+    "s_a609d1",
+    0
+   ],
+   [
+    "s_6f75e2",
+    0
+   ],
+   [
+    "h_6cd99c",
+    0
+   ]
+  ]
+ ]
+}

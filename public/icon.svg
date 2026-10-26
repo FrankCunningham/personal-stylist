@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#2a1e17"/>
+  <rect x="96" y="104" width="320" height="56" rx="12" fill="#CC5500"/>
+  <rect x="96" y="176" width="320" height="56" rx="12" fill="#2F5233"/>
+  <rect x="96" y="248" width="320" height="56" rx="12" fill="#800020"/>
+  <rect x="96" y="320" width="320" height="56" rx="12" fill="#008080"/>
+  <rect x="96" y="392" width="320" height="24" rx="8" fill="#F5ECD7"/>
+</svg>
