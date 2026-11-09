@@ -1,42 +1,34 @@
 # Weekly stock check
 
-Last run: 2026-11-02
+Last run: 2026-11-09
 
-- 341 colors showing in the app
-- 14 hidden (sold out or dead link)
+- 343 colors showing in the app
+- 12 hidden (sold out or dead link)
 
 **Couldn't check:** Perry Ellis. Those items kept last week's status.
 
 ## Hidden this week
 
-- Perry Ellis 5-Pocket Stretch Chino Pants, Dark Sapphire (DXL) — this color is no longer offered
-- Carhartt Workwear Short-Sleeve Henley, Port (DXL) — this color is no longer offered
-- Oak Hill Microfiber Waist-Relaxer Pants, New Khaki (DXL) — this color is no longer offered
-- Good Man Brand Victory V-Notch Tee, Forest (Good Man Brand) — sold out in every size
-- G.H. Bass Larson Venetian Loom Weejuns Loafer, Dark Brown (G.H. Bass) — sold out in every size
-- BYLT Signature Long Sleeve Polo, Maroon (BYLT) — sold out in every size
-- BYLT Roamknit Hoodie, Dark Brown (BYLT) — sold out in every size
-- tentree Rambler Sweater, Dark Blue Mirage Heather Nep (tentree) — sold out in every size
-- BYLT Hooded Drop-Cut LUX, Bone (BYLT) — sold out in every size
-- UNIQLO DRY Waffle Henley T-Shirt, 31 Beige (UNIQLO) — this color was removed from the product
-- UNIQLO DRY Waffle Henley T-Shirt, 69 Navy (UNIQLO) — this color was removed from the product
+- True Nation Clubhouse Chino Pants, Seal Brown (DXL) — this color is no longer offered
+- UNIQLO Stretch Easy Ankle Pants, 36 Brown (UNIQLO) — this color was removed from the product
 
 ## Back in stock this week
 
-- True Nation Clubhouse Chino Pants, Seal Brown (DXL)
+- Carhartt Workwear Short-Sleeve Henley, Port (DXL)
+- BYLT Signature Long Sleeve Polo, Maroon (BYLT)
+- BYLT Roamknit Hoodie, Dark Brown (BYLT)
+- BYLT Hooded Drop-Cut LUX, Bone (BYLT)
 
 ## Everything currently hidden
 
 - Perry Ellis 5-Pocket Stretch Chino Pants, Dark Sapphire (DXL) — this color is no longer offered
 - Oak Hill Solid Camp Shirt, Fanfare (DXL) — this color is no longer offered
-- Carhartt Workwear Short-Sleeve Henley, Port (DXL) — this color is no longer offered
+- True Nation Clubhouse Chino Pants, Seal Brown (DXL) — this color is no longer offered
 - Oak Hill Microfiber Waist-Relaxer Pants, New Khaki (DXL) — this color is no longer offered
 - Good Man Brand Victory V-Notch Tee, Forest (Good Man Brand) — sold out in every size
 - G.H. Bass Larson Venetian Loom Weejuns Loafer, Dark Brown (G.H. Bass) — sold out in every size
-- BYLT Signature Long Sleeve Polo, Maroon (BYLT) — sold out in every size
-- BYLT Roamknit Hoodie, Dark Brown (BYLT) — sold out in every size
 - tentree Rambler Sweater, Dark Blue Mirage Heather Nep (tentree) — sold out in every size
-- BYLT Hooded Drop-Cut LUX, Bone (BYLT) — sold out in every size
+- UNIQLO Stretch Easy Ankle Pants, 36 Brown (UNIQLO) — this color was removed from the product
 - UNIQLO DRY Waffle Henley T-Shirt, 31 Beige (UNIQLO) — this color was removed from the product
 - UNIQLO DRY Waffle Henley T-Shirt, 69 Navy (UNIQLO) — this color was removed from the product
 - UNIQLO Flannel Shirt, 18 Wine (UNIQLO) — this color was removed from the product
