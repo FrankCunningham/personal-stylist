@@ -1,37 +1,30 @@
 # Weekly stock check
 
-Last run: 2026-11-16
+Last run: 2026-11-24
 
-- 338 colors showing in the app
-- 17 hidden (sold out or dead link)
+- 340 colors showing in the app
+- 15 hidden (sold out or dead link)
 
 **Couldn't check:** Perry Ellis. Those items kept last week's status.
 
 ## Hidden this week
 
-- Harbor Bay Moisture-Wicking Pocket T-Shirt, Gray Night Heather (DXL) — this color is no longer offered
-- Carhartt Workwear Short-Sleeve Henley, Navy (DXL) — this color is no longer offered
-- Carhartt Workwear Short-Sleeve Henley, Port (DXL) — this color is no longer offered
-- True Nation Patch & Welt Jacket, Rustic (DXL) — this color is no longer offered
-- True Classic Long Sleeve T Shirt, Mahogany (True Classic) — sold out in every size
-- UNIQLO Washable 3D Knit Sweater, 37 Brown (UNIQLO) — this color was removed from the product
-- UNIQLO Washable Milano Ribbed Sweater, 67 Blue (UNIQLO) — this color was removed from the product
+- True Nation Washed Denim Sport Shirt, Blue (DXL) — this color is no longer offered
 
 ## Back in stock this week
 
-- UNIQLO DRY Waffle Henley T-Shirt, 31 Beige (UNIQLO)
-- UNIQLO DRY Waffle Henley T-Shirt, 69 Navy (UNIQLO)
+- Carhartt Workwear Short-Sleeve Henley, Navy (DXL)
+- Carhartt Workwear Short-Sleeve Henley, Port (DXL)
+- Oak Hill Microfiber Waist-Relaxer Pants, New Khaki (DXL)
 
 ## Everything currently hidden
 
 - Perry Ellis 5-Pocket Stretch Chino Pants, Dark Sapphire (DXL) — this color is no longer offered
 - Oak Hill Solid Camp Shirt, Fanfare (DXL) — this color is no longer offered
+- True Nation Washed Denim Sport Shirt, Blue (DXL) — this color is no longer offered
 - Harbor Bay Moisture-Wicking Pocket T-Shirt, Gray Night Heather (DXL) — this color is no longer offered
-- Carhartt Workwear Short-Sleeve Henley, Navy (DXL) — this color is no longer offered
-- Carhartt Workwear Short-Sleeve Henley, Port (DXL) — this color is no longer offered
 - True Nation Patch & Welt Jacket, Rustic (DXL) — this color is no longer offered
 - True Nation Clubhouse Chino Pants, Seal Brown (DXL) — this color is no longer offered
-- Oak Hill Microfiber Waist-Relaxer Pants, New Khaki (DXL) — this color is no longer offered
 - Good Man Brand Victory V-Notch Tee, Forest (Good Man Brand) — sold out in every size
 - G.H. Bass Larson Venetian Loom Weejuns Loafer, Dark Brown (G.H. Bass) — sold out in every size
 - tentree Rambler Sweater, Dark Blue Mirage Heather Nep (tentree) — sold out in every size
@@ -45,6 +38,7 @@ Last run: 2026-11-16
 ## Still showing, but couldn't confirm
 
 - Good Man Brand Legend Henley, Brandy (Good Man Brand) — no stock information on the page
+- Good Man Brand Snap Hoodie, Blanc de Blanc (Good Man Brand) — no stock information on the page
 - Perry Ellis Cotton Washed Oxford Shirt, Captains Blue (Perry Ellis) — store unreachable this week; kept last answer
 - Perry Ellis Slim Fit Total Stretch Shirt, Forest River (Perry Ellis) — store unreachable this week; kept last answer
 - Perry Ellis Neoprene Quarter Zip Sweater, Emboldened (Perry Ellis) — store unreachable this week; kept last answer
@@ -59,4 +53,4 @@ Last run: 2026-11-16
 - Perry Ellis Quarter Zip Ribbed Polo, Castle Wall (Perry Ellis) — store unreachable this week; kept last answer
 - Perry Ellis Tech Knit Quarter Zip Sweater, Cabernet (Perry Ellis) — store unreachable this week; kept last answer
 - Perry Ellis Tech Knit Quarter Zip Sweater, Island Fossil Heather (Perry Ellis) — store unreachable this week; kept last answer
-- American Giant Everest Tee, Sycamore (American Giant) — store answered 429
+- American Giant Resort Shirt, Windsor Wine (American Giant) — store answered 429
